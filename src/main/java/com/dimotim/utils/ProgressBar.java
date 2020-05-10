@@ -8,6 +8,7 @@ public class ProgressBar{
     private final String tag;
     private final long startTime=System.currentTimeMillis();
     private final AtomicInteger stepsLeft;
+
     public ProgressBar(String tag, int steps, long updatePeriodMs){
         this.tag=tag;
         stepsLeft=new AtomicInteger(steps);
@@ -31,6 +32,7 @@ public class ProgressBar{
         thread.setDaemon(true);
         thread.start();
     }
+
     public void nextStep(){
         int left=stepsLeft.decrementAndGet();
         if(left==0) {
