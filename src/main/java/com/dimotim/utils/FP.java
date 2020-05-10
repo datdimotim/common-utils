@@ -36,12 +36,4 @@ public class FP {
                 (ls,rs)-> Stream.concat(ls.stream(),rs.stream()).collect(Collectors.toList())
         );
     }
-
-    public static <T> Observable<T> backtracking(T root, Function<T, Observable<T>> childGenerator, Predicate<T> solutionValidator){
-        return Observable.concat(
-                Observable.just(root).filter(solutionValidator::test),
-                childGenerator.apply(root)
-                        .flatMap(ch->backtracking(ch,childGenerator,solutionValidator))
-        );
-    }
 }
