@@ -19,14 +19,7 @@ public class ProgressBar{
                 int left=stepsLeft.get();
                 if(left==0)return;
 
-                long time=System.currentTimeMillis()-startTime;
-                int stepsComplete=steps-left;
-                if(stepsComplete==0){
-                    System.out.println(tag+" "+stepsComplete+"/"+steps+" work time="+time+"ms");
-                }else {
-                    long leftTime=(long) (1.0*time/stepsComplete*left);
-                    System.out.println(tag+" "+stepsComplete+"/"+steps+" work time="+time+"ms, left time: "+leftTime+"ms");
-                }
+                System.out.println(tag+" "+formatProgress(startTime,System.currentTimeMillis(),steps,steps-left));
             }
         });
         thread.setDaemon(true);
@@ -36,7 +29,36 @@ public class ProgressBar{
     public void nextStep(){
         int left=stepsLeft.decrementAndGet();
         if(left==0) {
-            System.out.println(tag + " completed, time=" + (System.currentTimeMillis() - startTime) + "ms");
+            System.out.println(tag + " completed, time="+prettifyMillis(System.currentTimeMillis() - startTime));
+        }
+    }
+
+    public static String formatProgress(long startTime, long curTime, int steps, int curStep){
+        long time=curTime-startTime;
+        if(curStep==0){
+            return curStep+"/"+steps+" work time: "+prettifyMillis(time);
+        }else {
+            long leftTime=(long) (1.0*time/curStep*(steps-curStep));
+            return curStep+"/"+steps+", "+(int) (curStep*100.0/steps)+"%,"+" work time: "+prettifyMillis(time)+", left time: "+prettifyMillis(leftTime);
+        }
+    }
+
+    public static String prettifyMillis(long millis){
+        final long s=1000;
+        final long m=60*s;
+        final long h=60*m;
+        final long d=24*h;
+
+        if(millis>=d){
+            return "("+millis/d+"d "+(millis%d)/h+"h)";
+        }else if(millis>=h){
+            return "("+millis/h+"h "+(millis%h)/m+"m)";
+        }else if(millis>=m){
+            return "("+millis/m+"m "+(millis%m)/s+"s)";
+        }else if(millis>=s){
+            return "("+millis/s+"s "+millis%s+"ms)";
+        }else {
+            return "("+millis+"ms)";
         }
     }
 }
